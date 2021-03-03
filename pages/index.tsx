@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, Button, Container, Flex, Text, Textarea } from '@chakra-ui/react';
+import { Button, Container, Flex, Text, Textarea } from '@chakra-ui/react';
 
 export default function Index() {
   const [text, setText] = useState('');
