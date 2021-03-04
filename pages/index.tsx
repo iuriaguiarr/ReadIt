@@ -10,6 +10,7 @@ import {
 } from '../styles/pages/Home';
 import Head from 'next/head';
 import { useState } from 'react';
+// import { Input } from '@chakra-ui/react';
 
 export default function Index() {
   const [text, setText] = useState('');
@@ -56,6 +57,17 @@ export default function Index() {
     setSpeed(value);
   }
 
+  // async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  //   if (process.browser) {
+  //     const files = e.target.files;
+  //     const file = files?.item(0);
+
+  //     const fileReader = new FileReader();
+
+  //     // fileReader.readAsArrayBuffer();
+  //   }
+  // }
+
   return (
     <Container>
       <Head>
@@ -87,6 +99,13 @@ export default function Index() {
             Parar
           </Button>
         </GroupButton>
+
+        {/* <Input
+          type="file"
+          onChange={(e) => {
+            handleUpload(e);
+          }}
+        /> */}
 
         <Settings name="Velocidade de Leitura">
           <Slider
