@@ -1,21 +1,12 @@
 import {
   Button,
   Container,
-  Flex,
+  GroupButton,
+  Instruction,
+  Settings,
   Slider,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderTrack,
-  Text,
   Textarea,
-} from '@chakra-ui/react';
-import {
-  BotaoStyle,
-  ContainerStyle,
-  FlexStyle,
-  TextareaStyle,
-  TextStyle,
-} from '../styles/pages/index';
+} from '../styles/pages/Home';
 import Head from 'next/head';
 import { useState } from 'react';
 
@@ -23,83 +14,71 @@ export default function Index() {
   const [text, setText] = useState('');
   const [speed, setSpeed] = useState(1);
 
-  function sayIt() {
+  function utteranceGenerator() {
     if (process.browser) {
       const utterance = new SpeechSynthesisUtterance();
       utterance.lang = 'pt-BR';
-
-      console.log(speed);
       utterance.rate = speed;
       utterance.volume = 1;
-
       return utterance;
     } else {
       return new SpeechSynthesisUtterance();
     }
   }
 
-  function speak() {
+  function handleSpeak() {
     if (process.browser) {
       speechSynthesis.cancel();
 
-      var sentences = text.split('.');
-      for (var i = 0; i < sentences.length; i++) {
-        var toSay = sayIt();
-        toSay.text = sentences[i];
-        speechSynthesis.speak(toSay);
-      }
+      text.split('.').forEach((sentence) => {
+        const readIt = utteranceGenerator();
+        readIt.text = sentence;
+        speechSynthesis.speak(readIt);
+      });
     }
   }
 
-  function stop() {
+  function handleStop() {
     if (process.browser) {
       speechSynthesis.cancel();
     }
   }
 
   function handleSpeed(value: number) {
-    if (process.browser) {
-      setSpeed(value);
-    }
+    setSpeed(value);
   }
 
   return (
-    <Container {...ContainerStyle}>
+    <Container>
       <Head>
         <title>ReadIt | Início</title>
       </Head>
-      <Text {...TextStyle}>
+      <Instruction>
         Insira o texto desejado abaixo, e logo em seguida pressione falar.
-      </Text>
+      </Instruction>
 
       <Textarea
-        {...TextareaStyle((event) => {
+        onChange={(event) => {
           setText(event.target.value);
-        })}
+        }}
       />
-      <Flex {...FlexStyle}>
-        <Button {...BotaoStyle('green', speak)}>Falar</Button>
-        <Button {...BotaoStyle('red', stop)}>Parar</Button>
-      </Flex>
+      <GroupButton>
+        <Button background="green" onClick={handleSpeak}>
+          Falar
+        </Button>
+        <Button background="red" onClick={handleStop}>
+          Falar
+        </Button>
+      </GroupButton>
 
-      <Flex {...FlexStyle}>
-        <Text minWidth="20%">Velocidade de Leitura:</Text>
+      <Settings name="Velocidade de Leitura">
         <Slider
-          marginY={8}
-          min={0.1}
-          max={2}
-          step={0.1}
+          defaultValue={speed}
           onChange={(value: number): void => {
             handleSpeed(value);
           }}
-          defaultValue={speed}
-        >
-          <SliderTrack>
-            <SliderFilledTrack />
-          </SliderTrack>
-          <SliderThumb />
-        </Slider>
-      </Flex>
+        />
+      </Settings>
     </Container>
   );
 }
