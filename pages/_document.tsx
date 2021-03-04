@@ -5,7 +5,9 @@ export default class Document extends NextDocument {
   render() {
     return (
       <Html>
-        <Head />
+        <Head>
+          <link rel="shortcut icon" href="favicon.png" type="image/png" />
+        </Head>
         <body>
           <ColorModeScript />
           <Main />

@@ -1,21 +1,27 @@
 import { extendTheme } from '@chakra-ui/react';
-import { createBreakpoints } from '@chakra-ui/theme-tools';
+import { theme } from '@chakra-ui/react';
 
-const fonts = { mono: `'Roboto', Sans-serif` };
-
-const breakpoints = createBreakpoints({
-  sm: '40em',
-  md: '52em',
-  lg: '64em',
-  xl: '80em',
-});
-
-const theme = extendTheme({
-  colors: {
-    black: '#16161D',
+const customTheme = extendTheme({
+  ...theme,
+  fonts: {
+    body: 'Roboto, system-ui, sans-serif',
+    heading: 'Roboto, system-ui, sans-serif',
+    mono: 'Menlo, monospace',
   },
-  fonts,
-  breakpoints,
+  fontWeights: {
+    ...theme.fontWeights,
+    normal: 400,
+    medium: 600,
+    bold: 700,
+  },
+  radii: {
+    ...theme.radii,
+    sm: '5px',
+    md: '8px',
+  },
+  colors: {
+    ...theme.colors,
+  },
 });
 
-export default theme;
+export default customTheme;
