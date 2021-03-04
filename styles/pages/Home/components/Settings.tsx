@@ -7,7 +7,7 @@ interface Props {
 
 export default function Settings(props: Props) {
   return (
-    <Flex flexDir="column" width="50vw" marginY={8}>
+    <Flex flexDir="column" width="100%" marginY={8}>
       <Text margin={2}>{props.name}:</Text>
       {props.children}
     </Flex>

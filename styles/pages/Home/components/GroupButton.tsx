@@ -7,7 +7,7 @@ interface Props {
 export default function GroupButton(props: Props) {
   return (
     <ChakraFlex
-      width="50vw"
+      width="100%"
       justifyContent="space-between"
       alignItems="center"
       gridGap={4}

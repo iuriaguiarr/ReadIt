@@ -4,11 +4,13 @@ interface Props {
   background: string;
   onClick: () => void;
   children: string;
+  disabled?: boolean;
 }
 
 export default function Button(props: Props) {
   return (
     <ChakraButton
+      disabled={props.disabled}
       color="white"
       background={`${props.background}.500`}
       width="100%"

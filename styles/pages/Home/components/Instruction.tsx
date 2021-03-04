@@ -6,7 +6,7 @@ interface Props {
 
 export default function Text(props: Props) {
   return (
-    <ChakraText textAlign="left" fontSize="2xl" width="50vw">
+    <ChakraText textAlign="left" fontSize="2xl" width="100%">
       {props.children}
     </ChakraText>
   );

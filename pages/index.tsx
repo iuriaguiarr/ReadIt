@@ -1,6 +1,7 @@
 import {
   Button,
   Container,
+  Content,
   GroupButton,
   Instruction,
   Settings,
@@ -13,6 +14,7 @@ import { useState } from 'react';
 export default function Index() {
   const [text, setText] = useState('');
   const [speed, setSpeed] = useState(1);
+  const [isButtonStopDisabled, setIsButtonStopDisabled] = useState(true);
 
   function utteranceGenerator() {
     if (process.browser) {
@@ -20,6 +22,12 @@ export default function Index() {
       utterance.lang = 'pt-BR';
       utterance.rate = speed;
       utterance.volume = 1;
+      utterance.onstart = () => {
+        setIsButtonStopDisabled(false);
+      };
+      utterance.onend = () => {
+        setIsButtonStopDisabled(true);
+      };
       return utterance;
     } else {
       return new SpeechSynthesisUtterance();
@@ -53,32 +61,42 @@ export default function Index() {
       <Head>
         <title>ReadIt | Início</title>
       </Head>
-      <Instruction>
-        Insira o texto desejado abaixo, e logo em seguida pressione falar.
-      </Instruction>
+      <Content>
+        <Instruction>
+          Insira o texto desejado abaixo, e logo em seguida pressione falar.
+        </Instruction>
 
-      <Textarea
-        onChange={(event) => {
-          setText(event.target.value);
-        }}
-      />
-      <GroupButton>
-        <Button background="green" onClick={handleSpeak}>
-          Falar
-        </Button>
-        <Button background="red" onClick={handleStop}>
-          Parar
-        </Button>
-      </GroupButton>
-
-      <Settings name="Velocidade de Leitura">
-        <Slider
-          defaultValue={speed}
-          onChange={(value: number): void => {
-            handleSpeed(value);
+        <Textarea
+          onChange={(event) => {
+            setText(event.target.value);
           }}
         />
-      </Settings>
+        <GroupButton>
+          <Button
+            disabled={text ? false : true}
+            background="green"
+            onClick={handleSpeak}
+          >
+            Falar
+          </Button>
+          <Button
+            disabled={isButtonStopDisabled}
+            background="red"
+            onClick={handleStop}
+          >
+            Parar
+          </Button>
+        </GroupButton>
+
+        <Settings name="Velocidade de Leitura">
+          <Slider
+            defaultValue={speed}
+            onChange={(value: number): void => {
+              handleSpeed(value);
+            }}
+          />
+        </Settings>
+      </Content>
     </Container>
   );
 }

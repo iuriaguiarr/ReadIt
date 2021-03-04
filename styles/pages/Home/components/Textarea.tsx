@@ -5,5 +5,5 @@ interface Props {
 }
 
 export default function Textarea(props: Props) {
-  return <ChakraTextarea width="50vw" margin={4} onChange={props.onChange} />;
+  return <ChakraTextarea width="100%" margin={4} onChange={props.onChange} />;
 }
