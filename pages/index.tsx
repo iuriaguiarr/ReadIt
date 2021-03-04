@@ -67,7 +67,7 @@ export default function Index() {
           Falar
         </Button>
         <Button background="red" onClick={handleStop}>
-          Falar
+          Parar
         </Button>
       </GroupButton>
 
