@@ -1,49 +1,113 @@
+import { BookOpen, Moon, Sun } from "react-feather";
 import {
   Button,
-  Container,
-  Content,
-  GroupButton,
-  Instruction,
-  Settings,
-  Slider,
+  Center,
+  Flex,
+  Heading,
+  Spacer,
+  Text,
   Textarea,
-} from '../styles/pages/Home';
-import Head from 'next/head';
-import { useState } from 'react';
-// import { Input } from '@chakra-ui/react';
+  useToast,
+  useColorMode,
+  ColorMode,
+  ButtonGroup,
+  Grid,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  // useBreakpointValue,
+} from "@chakra-ui/react";
+import Head from "next/head";
+import React, { useEffect, useState } from "react";
+import * as gtag from "@lib/gtag";
+import { getVoices } from "@functions/getVoices";
+import { IVoices } from "@interfaces/IVoices";
+import { ILanguage } from "@interfaces/ILanguages";
+import { generateUtterance } from "@functions/generateUtterance";
 
 export default function Index() {
-  const [text, setText] = useState('');
   const [speed, setSpeed] = useState(1);
+  const [text, setText] = useState("");
+  const [voices, setVoices] = useState<IVoices>({ enUS: [], ptBR: [] });
+  const [reloadGetVoices, setReloadGetVoices] = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState(0);
+  const { colorMode, toggleColorMode } = useColorMode();
+  const [language, setLanguage] = useState<ILanguage>("ptBR");
   const [isButtonStopDisabled, setIsButtonStopDisabled] = useState(true);
 
-  function utteranceGenerator() {
-    if (process.browser) {
-      const utterance = new SpeechSynthesisUtterance();
-      utterance.lang = 'pt-BR';
-      utterance.rate = speed;
-      utterance.volume = 1;
-      utterance.onstart = () => {
-        setIsButtonStopDisabled(false);
-      };
-      utterance.onend = () => {
-        setIsButtonStopDisabled(true);
-      };
-      return utterance;
-    } else {
-      return new SpeechSynthesisUtterance();
-    }
-  }
+  // const responsive = useBreakpointValue({ base: "row", sm: "column" });
+
+  const toast = useToast();
 
   function handleSpeak() {
     if (process.browser) {
-      speechSynthesis.cancel();
-
-      text.split('.').forEach((sentence) => {
-        const readIt = utteranceGenerator();
-        readIt.text = sentence;
-        speechSynthesis.speak(readIt);
-      });
+      if (text) {
+        if (language) {
+          if (voices[language][selectedVoice]) {
+            if (speed) {
+              gtag.event({
+                action: "Clique",
+                category: language,
+                label: voices[language][selectedVoice],
+                value: `${speed}`,
+              });
+              speechSynthesis.cancel();
+              text.split(".").forEach((sentence) => {
+                const readIt = generateUtterance(speed);
+                readIt.voice = voices[language][selectedVoice];
+                readIt.onstart = () => {
+                  setIsButtonStopDisabled(false);
+                };
+                readIt.onend = () => {
+                  setIsButtonStopDisabled(true);
+                };
+                readIt.text = sentence;
+                speechSynthesis.speak(readIt);
+              });
+            } else {
+              toast({
+                title: "Velocidade vazia.",
+                description:
+                  "Por gentileza, informe a velocidade que deseja ouvir.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "top-right",
+              });
+            }
+          } else {
+            toast({
+              title: "Voz desejada vazia.",
+              description: "Por gentileza, informe a voz que deseja ouvir.",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+              position: "top-right",
+            });
+          }
+        } else {
+          toast({
+            title: "Idioma vazio.",
+            description:
+              "Por gentileza, informe o idioma do texto que deseja ouvir.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "top-right",
+          });
+        }
+      } else {
+        toast({
+          title: "Texto vazio.",
+          description:
+            "Por gentileza, digite ou cole o texto que deseja ouvir.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top-right",
+        });
+      }
     }
   }
 
@@ -53,69 +117,189 @@ export default function Index() {
     }
   }
 
-  function handleSpeed(value: number) {
-    setSpeed(value);
-  }
-
-  // async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-  //   if (process.browser) {
-  //     const files = e.target.files;
-  //     const file = files?.item(0);
-
-  //     const fileReader = new FileReader();
-
-  //     // fileReader.readAsArrayBuffer();
-  //   }
-  // }
+  useEffect(() => {
+    async function loadVoices() {
+      const result = await getVoices();
+      setVoices(result);
+      setReloadGetVoices(!reloadGetVoices);
+    }
+    if (!voices.enUS.length && !voices.ptBR.length) {
+      loadVoices();
+    }
+  }, [reloadGetVoices]);
 
   return (
-    <Container>
+    <Flex width="full" minH="100vh" padding="16" flexDir="column">
+      {/* Meta Tags */}
       <Head>
-        <title>ReadIt | Início</title>
-      </Head>
-      <Content>
-        <Instruction>
-          Insira o texto desejado abaixo, e logo em seguida pressione falar.
-        </Instruction>
-
-        <Textarea
-          onChange={(event) => {
-            setText(event.target.value);
-          }}
+        <title>Readit - Transforme textos em vibrações!</title>
+        <meta
+          name="description"
+          content="Ouça os seus textos, transforme-os em vibrações!"
         />
-        <GroupButton>
-          <Button
-            disabled={text ? false : true}
-            background="green"
-            onClick={handleSpeak}
-          >
-            Falar
-          </Button>
-          <Button
-            disabled={isButtonStopDisabled}
-            background="red"
-            onClick={handleStop}
-          >
-            Parar
-          </Button>
-        </GroupButton>
+        <meta name="robots" content="index, follow" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta httpEquiv="Content-Type" content="text/html;charset=UTF-8" />
+      </Head>
+      {/* Meta Tags */}
+      {/* Header */}
+      <Flex width="full" justify="space-between" align="start" flexDir="row">
+        {/* Logo */}
+        <Flex
+          justify="center"
+          align="center"
+          gridGap="0.5rem"
+          marginBottom="2rem"
+        >
+          <BookOpen />
+          <Flex align="center" justify="center" gridGap="0.3rem">
+            <Heading size="md">Readit -</Heading>
 
-        {/* <Input
-          type="file"
-          onChange={(e) => {
-            handleUpload(e);
-          }}
-        /> */}
+            <Text fontWeight="semibold">Transforme textos em vibrações!</Text>
+          </Flex>
+        </Flex>
+        {/* Logo */}
+        {/* Color mode */}
+        <Button onClick={toggleColorMode}>
+          {colorMode == "light" && <Moon />}
+          {colorMode == "dark" && <Sun />}
+        </Button>
+        {/* Color mode */}
+      </Flex>
+      {/* Header */}
+      {/* Body */}
 
-        <Settings name="Velocidade de Leitura">
-          <Slider
-            defaultValue={speed}
-            onChange={(value: number): void => {
-              handleSpeed(value);
-            }}
+      <Flex flexDir="row" flex={1} gridGap="20">
+        {/* Área de texto */}
+        <Flex flexDir="column" flex={1}>
+          <Text marginBottom="4" marginTop="10">
+            Digite ou cole o texto que deseja ouvir:
+          </Text>
+          <Textarea
+            value={text}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              setText(e.target.value)
+            }
+            autoFocus={true}
+            resize="none"
+            flex={1}
+            placeholder="Digite ou cole aqui..."
           />
-        </Settings>
-      </Content>
-    </Container>
+        </Flex>
+        {/* Área de texto */}
+
+        {/* Configurações */}
+        <Flex flexDir="column" width="full" flex={1}>
+          {/* Idioma */}
+          <Flex justifyContent="space-between" marginBottom="4" marginTop="10">
+            <Text>Selecione o idioma desejado</Text>
+            <Text fontSize="sm">
+              Atual:{" "}
+              {language == "ptBR" ? "Português do Brasil" : "Inglês dos EUA"}
+            </Text>
+          </Flex>
+          <ButtonGroup width="full">
+            <Button
+              size="sm"
+              colorScheme="blue"
+              onClick={() => setLanguage("ptBR")}
+              disabled={language == "ptBR"}
+              width="full"
+            >
+              Português do Brasil
+            </Button>
+            <Button
+              size="sm"
+              colorScheme="blue"
+              onClick={() => setLanguage("enUS")}
+              disabled={language == "enUS"}
+              width="full"
+            >
+              Inglês dos EUA
+            </Button>
+          </ButtonGroup>
+          {/* Idioma */}
+
+          {/* Voz */}
+          <Flex justifyContent="space-between" marginBottom="4" marginTop="10">
+            <Text>Selecione a voz desejada</Text>
+            <Text fontSize="sm">
+              Atual:{" "}
+              {voices[language][selectedVoice]
+                ? voices[language][selectedVoice].name
+                : "Nenhuma"}
+            </Text>
+          </Flex>
+
+          <Grid width="full" gridTemplateColumns="1fr 1fr" gridGap="2">
+            {voices[language].map((voice, index) => (
+              <Button
+                key={index}
+                size="sm"
+                colorScheme="blue"
+                onClick={() => setSelectedVoice(index)}
+                disabled={index == selectedVoice}
+                width="full"
+              >
+                {voice.name}
+              </Button>
+            ))}
+          </Grid>
+          {/* Voz */}
+
+          {/* Velocidade */}
+          <Flex justifyContent="space-between" marginBottom="4" marginTop="10">
+            <Text>Selecione a velocidade de leitura desejada</Text>
+            <Text fontSize="sm">Atual: {speed}</Text>
+          </Flex>
+          <Slider
+            min={0.1}
+            max={2}
+            step={0.1}
+            onChange={(value: number): void => {
+              setSpeed(value);
+            }}
+            defaultValue={speed}
+          >
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb />
+          </Slider>
+          {/* Velocidade */}
+
+          {/* Falar/Parar */}
+          <ButtonGroup width="full" marginTop="auto">
+            <Button
+              disabled={!isButtonStopDisabled}
+              width="full"
+              colorScheme="green"
+              onClick={handleSpeak}
+            >
+              Falar
+            </Button>
+            <Button
+              disabled={isButtonStopDisabled}
+              width="full"
+              colorScheme="red"
+              onClick={() => {
+                handleStop();
+                gtag.event({
+                  action: "Clique",
+                  category: "Parar",
+                  label: "Clicou para parar",
+                  value: "Parar",
+                });
+              }}
+            >
+              Parar
+            </Button>
+          </ButtonGroup>
+          {/* Falar/Parar */}
+        </Flex>
+        {/* Configurações */}
+      </Flex>
+      {/* Body */}
+    </Flex>
   );
 }
