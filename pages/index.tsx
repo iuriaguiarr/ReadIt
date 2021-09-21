@@ -36,8 +36,6 @@ export default function Index() {
   const [language, setLanguage] = useState<ILanguage>("ptBR");
   const [isButtonStopDisabled, setIsButtonStopDisabled] = useState(true);
 
-  // const responsive = useBreakpointValue({ base: "row", sm: "column" });
-
   const toast = useToast();
 
   function handleSpeak() {
@@ -169,13 +167,21 @@ export default function Index() {
       {/* Header */}
       {/* Body */}
 
-      <Flex flexDir="row" flex={1} gridGap="20">
+      <Flex
+        flexDir={{ sm: "column", md: "row", lg: "row", xl: "row" }}
+        flex={1}
+        gridGap="2rem"
+      >
         {/* Área de texto */}
         <Flex flexDir="column" flex={1}>
-          <Text marginBottom="4" marginTop="10">
+          <Text
+            marginBottom="4"
+            marginTop={{ sm: "4", md: "10", lg: "10", xl: "10" }}
+          >
             Digite ou cole o texto que deseja ouvir:
           </Text>
           <Textarea
+            minHeight={{ sm: "40vh", md: "auto", lg: "auto", xl: "auto" }}
             value={text}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               setText(e.target.value)
@@ -198,7 +204,11 @@ export default function Index() {
               {language == "ptBR" ? "Português do Brasil" : "Inglês dos EUA"}
             </Text>
           </Flex>
-          <ButtonGroup width="full">
+          <Flex
+            width="full"
+            flexDir={{ sm: "column", md: "column", lg: "row", xl: "row" }}
+            gridGap={2}
+          >
             <Button
               size="sm"
               colorScheme="blue"
@@ -217,7 +227,7 @@ export default function Index() {
             >
               Inglês dos EUA
             </Button>
-          </ButtonGroup>
+          </Flex>
           {/* Idioma */}
 
           {/* Voz */}
@@ -231,7 +241,13 @@ export default function Index() {
             </Text>
           </Flex>
 
-          <Grid width="full" gridTemplateColumns="1fr 1fr" gridGap="2">
+          <Flex
+            width="full"
+            display={{ sm: "flex", md: "flex", lg: "grid", xl: "grid" }}
+            flexDir="column"
+            gridTemplateColumns="1fr 1fr"
+            gridGap="2"
+          >
             {voices[language].map((voice, index) => (
               <Button
                 key={index}
@@ -244,7 +260,7 @@ export default function Index() {
                 {voice.name}
               </Button>
             ))}
-          </Grid>
+          </Flex>
           {/* Voz */}
 
           {/* Velocidade */}
@@ -271,14 +287,6 @@ export default function Index() {
           {/* Falar/Parar */}
           <ButtonGroup width="full" marginTop="auto">
             <Button
-              disabled={!isButtonStopDisabled}
-              width="full"
-              colorScheme="green"
-              onClick={handleSpeak}
-            >
-              Falar
-            </Button>
-            <Button
               disabled={isButtonStopDisabled}
               width="full"
               colorScheme="red"
@@ -293,6 +301,14 @@ export default function Index() {
               }}
             >
               Parar
+            </Button>
+            <Button
+              disabled={!isButtonStopDisabled}
+              width="full"
+              colorScheme="green"
+              onClick={handleSpeak}
+            >
+              Falar
             </Button>
           </ButtonGroup>
           {/* Falar/Parar */}
