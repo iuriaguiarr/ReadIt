@@ -168,7 +168,13 @@ export default function Index() {
       {/* Body */}
 
       <Flex
-        flexDir={{ sm: "column", md: "row", lg: "row", xl: "row" }}
+        flexDir={{
+          base: "column",
+          sm: "column",
+          md: "row",
+          lg: "row",
+          xl: "row",
+        }}
         flex={1}
         gridGap="2rem"
       >
@@ -176,12 +182,18 @@ export default function Index() {
         <Flex flexDir="column" flex={1}>
           <Text
             marginBottom="4"
-            marginTop={{ sm: "4", md: "10", lg: "10", xl: "10" }}
+            marginTop={{ base: "4", sm: "4", md: "10", lg: "10", xl: "10" }}
           >
             Digite ou cole o texto que deseja ouvir:
           </Text>
           <Textarea
-            minHeight={{ sm: "40vh", md: "auto", lg: "auto", xl: "auto" }}
+            minHeight={{
+              base: "40vh",
+              sm: "40vh",
+              md: "auto",
+              lg: "auto",
+              xl: "auto",
+            }}
             value={text}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               setText(e.target.value)
@@ -206,7 +218,13 @@ export default function Index() {
           </Flex>
           <Flex
             width="full"
-            flexDir={{ sm: "column", md: "column", lg: "row", xl: "row" }}
+            flexDir={{
+              base: "column",
+              sm: "column",
+              md: "column",
+              lg: "row",
+              xl: "row",
+            }}
             gridGap={2}
           >
             <Button
@@ -243,7 +261,13 @@ export default function Index() {
 
           <Flex
             width="full"
-            display={{ sm: "flex", md: "flex", lg: "grid", xl: "grid" }}
+            display={{
+              base: "flex",
+              sm: "flex",
+              md: "flex",
+              lg: "grid",
+              xl: "grid",
+            }}
             flexDir="column"
             gridTemplateColumns="1fr 1fr"
             gridGap="2"
