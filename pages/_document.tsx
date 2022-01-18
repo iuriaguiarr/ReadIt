@@ -12,6 +12,7 @@ export default class MyDocument extends Document {
           function () {
             (I[b].q = I[b].q || []).push(arguments);
           };
+        //@ts-ignore
         I[b].t = 1 * new Date();
         i = n.createElement(f);
         i.async = 1;
@@ -25,7 +26,7 @@ export default class MyDocument extends Document {
         "https://webpush.infobip.com/bundle-latest.js",
         "infobipWebPush"
       );
-
+      //@ts-ignore
       infobipWebPush("init", {
         applicationCode:
           "589d52734db72e41f906aa7e12c1f147-0d5c1765-674a-4a84-b62c-1743bded5ebf",
@@ -37,6 +38,7 @@ export default class MyDocument extends Document {
       });
 
       (function (e, t, n, o) {
+        //@ts-ignore
         e.PeopleEventsObject = o;
         e[o] = e[o] || {
           init: function (t) {
@@ -61,6 +63,7 @@ export default class MyDocument extends Document {
         };
         var r = t.createElement("script");
         var s = t.getElementsByTagName("script")[0];
+        //@ts-ignore
         r.async = 1;
         r.src = n;
         s.parentNode.insertBefore(r, s);
@@ -70,11 +73,11 @@ export default class MyDocument extends Document {
         "https://s3.eu-central-1.amazonaws.com/portal-cdn-production/people-events-sdk/pe.latest-2.js",
         "pe"
       );
-
+      //@ts-ignore
       pe.init(
         "1b08d04cc472a1ba91664979dfab89a0-ae18afc2-c8ce-4f27-a323-af8e11b371cf"
       );
-
+      //@ts-ignore
       pe.setPerson({ email: "iuri.aguiar@tld.com.br" }, 2000);
     }, []);
 
