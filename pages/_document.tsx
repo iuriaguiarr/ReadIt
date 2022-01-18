@@ -79,6 +79,8 @@ export default class MyDocument extends Document {
       );
       //@ts-ignore
       pe.setPerson({ email: "iuri.aguiar@tld.com.br" }, 2000);
+      //@ts-ignore
+      pe.track("TestedeEvento", { teste2: true });
     }, []);
 
     return (
