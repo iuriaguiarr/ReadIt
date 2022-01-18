@@ -330,7 +330,11 @@ export default function Index() {
               disabled={!isButtonStopDisabled}
               width="full"
               colorScheme="green"
-              onClick={handleSpeak}
+              onClick={() => {
+                handleSpeak();
+                //@ts-ignore
+                pe.track("TestedeEvento", { teste2: true });
+              }}
             >
               Falar
             </Button>
